@@ -41,9 +41,17 @@
                 <!-- Image wrapper -->
                 <div class="position-relative">
                     <!-- Wishlist Icon -->
-                    <button type="button" class="btn btn-lg position-absolute top-0 end-0 m-2">
-                        <i class="fa-solid fa-bookmark"></i>
-                    </button>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'toggle_wishlist' product.id %}"
+                            class="btn btn-lg position-absolute top-0 end-0 m-2 text-decoration-none">
+                                <i class="fas fa-bookmark {% if product.id in wishlisted_product_ids %}text-warning{% else %}text-dark{% endif %}"></i>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}?next={{ request.get_full_path }}"
+                            class="btn btn-lg position-absolute top-0 end-0 m-2 text-decoration-none">
+                                <i class="fas fa-bookmark text-dark"></i>
+                        </a>
+                    {% endif %}
 
                     <!-- Product Image -->
                     {% for image in product.images.all %}
