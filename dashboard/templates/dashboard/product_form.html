@@ -99,6 +99,12 @@
                             {% endif %}
                         </div>
 
+                        {% if not product %}
+                            <div class="alert alert-info">
+                                Create the product first, then you will be able to upload up to 5 images on the next screen.
+                            </div>
+                        {% endif %}
+
                         <button type="submit" class="btn btn-dark">
                             {{ submit_text }}
                         </button>
@@ -157,8 +163,8 @@
                             <h5 class="mb-3">Upload New Image</h5>
 
                             <form method="post"
-                                  action="{% url 'add_product_image' product.id %}"
-                                  enctype="multipart/form-data">
+                                    action="{% url 'add_product_image' product.id %}"
+                                    enctype="multipart/form-data">
                                 {% csrf_token %}
 
                                 <div class="row">

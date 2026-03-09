@@ -68,9 +68,12 @@ def add_product(request):
     if request.method == "POST":
         form = ProductForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Product created successfully.")
-            return redirect("dashboard_home")
+            product = form.save()
+            messages.success(
+                request,
+                "Product created successfully. You can now upload images below."
+            )
+            return redirect("edit_product", product_id=product.id)
     else:
         form = ProductForm()
 
