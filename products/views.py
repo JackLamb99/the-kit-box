@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Product, Category
+from wishlist.models import WishlistItem
 
 
 def shop(request):
@@ -25,11 +26,21 @@ def shop(request):
     elif sort == "oldest":
         products = products.order_by("created_at")
 
+    wishlisted_product_ids = []
+
+    if request.user.is_authenticated:
+        wishlisted_product_ids = list(
+            WishlistItem.objects.filter(
+                user=request.user
+            ).values_list("product_id", flat=True)
+        )
+
     context = {
         "products": products,
         "categories": categories,
         "current_category": category_slug,
         "current_sort": sort,
+        "wishlisted_product_ids": wishlisted_product_ids,
     }
 
     return render(request, "products/shop.html", context)
@@ -38,8 +49,17 @@ def shop(request):
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
 
+    is_wishlisted = False
+
+    if request.user.is_authenticated:
+        is_wishlisted = WishlistItem.objects.filter(
+            user=request.user,
+            product=product
+        ).exists()
+
     context = {
         "product": product,
+        "is_wishlisted": is_wishlisted,
     }
 
     return render(request, "products/product_detail.html", context)
