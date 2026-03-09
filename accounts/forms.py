@@ -38,3 +38,32 @@ class CustomLoginForm(forms.Form):
 
     def get_user(self):
         return self.user
+
+
+class UserDetailsForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            "email",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "address_line_1",
+            "address_line_2",
+            "town_or_city",
+            "county",
+            "postcode",
+            "country",
+        ]
+        widgets = {
+            "email": forms.EmailInput(attrs={"class": "form-control"}),
+            "first_name": forms.TextInput(attrs={"class": "form-control"}),
+            "last_name": forms.TextInput(attrs={"class": "form-control"}),
+            "phone_number": forms.TextInput(attrs={"class": "form-control"}),
+            "address_line_1": forms.TextInput(attrs={"class": "form-control"}),
+            "address_line_2": forms.TextInput(attrs={"class": "form-control"}),
+            "town_or_city": forms.TextInput(attrs={"class": "form-control"}),
+            "county": forms.TextInput(attrs={"class": "form-control"}),
+            "postcode": forms.TextInput(attrs={"class": "form-control"}),
+            "country": forms.Select(attrs={"class": "form-select"}),
+        }
