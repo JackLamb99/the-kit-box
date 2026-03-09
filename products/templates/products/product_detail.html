@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container py-4">
+    <div class="row">
+        <!-- Product Gallery -->
+        <div class="col-lg-6 mb-3">
+            <div id="productCarousel" class="carousel slide">
+                <div class="carousel-inner">
+                    {% for image in product.images.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ image.alt_text }}">
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+
+            <!-- Thumbnails -->
+            <div class="row mt-2">
+                {% for image in product.images.all %}
+                <div class="col-4 col-md-3 mt-2">
+                    <img
+                        src="{{ image.image.url }}"
+                        class="img-fluid border"
+                        alt="{{ image.alt_text }}"
+                        data-bs-target="#productCarousel"
+                        data-bs-slide-to="{{ forloop.counter0 }}"
+                        style="cursor:pointer;"
+                    >
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Product Information -->
+        <div class="col-lg-6">
+            <h1 class="mb-3">{{ product.name }}</h1>
+
+            {% if product.is_on_sale %}
+                <p class="fs-5">
+                    <del>£{{ product.price }}</del>
+                    <span class="text-danger">£{{ product.sale_price }}</span>
+                </p>
+            {% else %}
+                <p class="fs-5">£{{ product.price }}</p>
+            {% endif %}
+
+            {% if product.stock_quantity == 0 %}
+                <p class="text-danger">Out of stock</p>
+            {% elif product.stock_quantity < 5 %}
+                <p class="text-warning">Low stock ({{ product.stock_quantity }} left)</p>
+            {% else %}
+                <p class="text-success">In stock</p>
+            {% endif %}
+
+            <ul>
+                {% for line in product.description.splitlines %}
+                    {% if line %}
+                        <li>{{ line }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+            <div class="d-flex gap-2 mt-3">
+                {% if product.stock_quantity > 0 %}
+                    <button class="btn btn-primary">Add to Cart</button>
+                {% else %}
+                    <button class="btn btn-primary" disabled>Add to Cart</button>
+                {% endif %}
+                <button type="button" class="btn btn-outline-dark">
+                    <i class="fa-solid fa-bookmark"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
