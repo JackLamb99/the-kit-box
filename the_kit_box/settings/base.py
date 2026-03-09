@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Third-party apps
+    "cloudinary",
+    "cloudinary_storage",
     # Project apps
     "accounts.apps.AccountsConfig",
     "products.apps.ProductsConfig",
@@ -112,10 +115,21 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Media files (admin uploads)
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+# Cloudinary
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": env("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": env("CLOUDINARY_API_KEY"),
+    "API_SECRET": env("CLOUDINARY_API_SECRET"),
+}
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
