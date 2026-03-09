@@ -1,10 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Product, Category
 from wishlist.models import WishlistItem
 
 
 def shop(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(is_active=True)
     categories = Category.objects.all()
 
     category_slug = request.GET.get("category", "all")
@@ -47,7 +48,10 @@ def shop(request):
 
 
 def product_detail(request, slug):
-    product = get_object_or_404(Product, slug=slug)
+    if request.user.is_authenticated and request.user.is_staff:
+        product = get_object_or_404(Product, slug=slug)
+    else:
+        product = get_object_or_404(Product, slug=slug, is_active=True)
 
     is_wishlisted = False
 
