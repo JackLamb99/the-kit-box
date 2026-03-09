@@ -1,6 +1,9 @@
+from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.shortcuts import render, redirect
-from .forms import CustomUserCreationForm, CustomLoginForm
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from checkout.models import Order
+from .forms import CustomUserCreationForm, CustomLoginForm, UserDetailsForm
 
 
 def register_view(request):
@@ -48,3 +51,46 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect("home")
+
+
+@login_required
+def account_view(request):
+    section = request.GET.get("section", "details")
+    order_sort = request.GET.get("order_sort", "newest")
+
+    if request.method == "POST":
+        form = UserDetailsForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect(f"{request.path}?updated=true")
+    else:
+        form = UserDetailsForm(instance=request.user)
+
+    orders = Order.objects.filter(user=request.user)
+
+    if order_sort == "oldest":
+        orders = orders.order_by("created_at")
+    else:
+        orders = orders.order_by("-created_at")
+
+    context = {
+        "account_section": section,
+        "form": form,
+        "orders": orders,
+        "current_order_sort": order_sort,
+    }
+
+    return render(request, "accounts/account.html", context)
+
+
+@login_required
+def account_order_detail(request, order_number):
+    order = get_object_or_404(
+        Order.objects.select_related("user").prefetch_related("lineitems__product"),
+        order_number=order_number,
+        user=request.user
+    )
+
+    return render(request, "accounts/order_detail.html", {
+        "order": order,
+    })
