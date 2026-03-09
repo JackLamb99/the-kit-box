@@ -17,13 +17,20 @@
                 <!-- Nav links -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Home</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                            href="{% url 'home' %}">
+                            Home
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/shop/' %}active{% endif %}" href="/shop/">Shop</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'shop' %}active{% endif %}"
+                            href="{% url 'shop' %}">
+                            Shop
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'cart_detail' %}" class="nav-link {% if request.path == '/cart/' %}active{% endif %}">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'cart_detail' %}active{% endif %}"
+                            href="{% url 'cart_detail' %}">
                             Cart
                             {% if cart_count %}
                                 <span class="badge bg-dark">{{ cart_count }}</span>
@@ -32,33 +39,45 @@
                     </li>
                     {% if request.user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/wishlist/' %}active{% endif %}" href="/wishlist/">Wishlist</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'wishlist' %}active{% endif %}"
+                            href="{% url 'wishlist' %}">
+                            Wishlist
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/accounts/account/' %}active{% endif %}" href="/accounts/account/">Account</a>
+                        <a class="nav-link {% if 'accounts' in request.resolver_match.app_name %}active{% endif %}"
+                            href="{% url 'accounts:account' %}">
+                            Account
+                        </a>
                     </li>
                     {% endif %}
-                    {% if request.user.is_authenticated and request.user.is_superuser %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/dashboard/admin/' %}active{% endif %}" href="/dashboard/admin/">Admin</a>
-                        </li>
+                    {% if request.user.is_authenticated and request.user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'dashboard' in request.path %}active{% endif %}"
+                            href="{% url 'dashboard_home' %}">
+                            Admin
+                        </a>
+                    </li>
                     {% endif %}
                 </ul>
-
-                <!-- Login/Logout -->
+                <!-- Login / Logout -->
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                {% if request.user.is_authenticated %}
+                    {% if request.user.is_authenticated %}
                     <li class="nav-item">
-                        <form action="/accounts/logout/" method="post" class="d-inline">
+                        <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-primary">Logout</button>
+                            <button type="submit" class="btn btn-primary">
+                                Logout
+                            </button>
                         </form>
                     </li>
-                {% else %}
+                    {% else %}
                     <li class="nav-item">
-                        <a class="btn btn-primary" href="/accounts/login/">Login</a>
+                        <a class="btn btn-primary" href="{% url 'accounts:login' %}">
+                            Login
+                        </a>
                     </li>
-                {% endif %}
+                    {% endif %}
                 </ul>
             </div>
         </div>
