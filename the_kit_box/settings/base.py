@@ -124,6 +124,11 @@ CLOUDINARY_STORAGE = {
     "API_SECRET": env("CLOUDINARY_API_SECRET"),
 }
 
+# Stripe
+STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+STRIPE_CURRENCY = "gbp"
+
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
