@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Saira+Stencil+One&display=swap');
+
+html, body {
+    background-color: #B6B6B6;
+    color: #333333;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    padding-top: 60px;
+}
+
+main {
+    flex: 1;
+}
+
+h1, h2, h3, h4, h5, h6,
+.navbar-brand {
+    font-family: "Saira Stencil One", sans-serif;
+    color: #333333;
+}
+
+.card-body {
+    background-color: #ffffff;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.nav-link {
+    color: #333333;
+    transition: color 0.15s ease, opacity 0.15s ease;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    font-weight: bold;
+    color: #000000;
+}
+
+.nav-link.active {
+    font-weight: bold;
+    position: relative;
+}
+
+.navbar-toggler {
+    padding: 0.25rem 0.5rem;
+}
+
+/* Utilities */
+.page-centre {
+    min-height: calc(100dvh - 225px);
+    display: grid;
+    place-items: center;
+}
+
+/* Footer */
+.footer {
+    background-color: #333333;
+    font-size: 1.2rem;
+    margin-top: auto;
+}
+
+.footer .contact-link {
+    font-weight: 600;
+    transition: opacity 0.2s ease;
+    color: #EFEFFF;
+}
+
+.footer .contact-link:hover {
+    opacity: 0.8;
+}
+
+.footer a i {
+    margin: auto;
+    color: #EFEFFF;
+}
+
+.footer .social-link {
+    font-size: 2rem;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.footer .social-link:hover {
+    transform: scale(1.15);
+    opacity: 0.8;
+}
+
+/* 404 Page */
+.not-found-image {
+    max-width: 280px;
+}
+
+@media (max-width: 360px) {
+    /* Navbar */
+    .navbar-brand span {
+        font-size: 1.2rem;
+    }
+
+    .navbar-toggler-icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    /* Footer */
+    .footer {
+        font-size: 1.1rem;
+        margin-top: auto;
+    }
+
+    .footer .social-link {
+        font-size: 1.5rem;
+    }
+}
