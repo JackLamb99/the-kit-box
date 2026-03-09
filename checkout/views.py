@@ -22,6 +22,19 @@ def checkout(request):
     cart_items = cart_data["cart_items"]
     total = cart_data["total"]
 
+    if not cart_items:
+        messages.error(request, "Your cart contains unavailable items.")
+        request.session["cart"] = {}
+        return redirect("cart")
+
+    for item in cart_items:
+        if not item["product"].is_active:
+            messages.error(
+                request,
+                f"{item['product'].name} is no longer available."
+            )
+            return redirect("cart")
+
     stock_ok, problem_product = cart_has_valid_stock(cart_items)
     if not stock_ok:
         messages.error(
@@ -97,6 +110,19 @@ def checkout_complete(request):
     cart_data = get_cart_data(request)
     cart_items = cart_data["cart_items"]
     total = cart_data["total"]
+
+    if not cart_items:
+        messages.error(request, "Your cart contains unavailable items.")
+        request.session["cart"] = {}
+        return redirect("cart")
+
+    for item in cart_items:
+        if not item["product"].is_active:
+            messages.error(
+                request,
+                f"{item['product'].name} is no longer available."
+            )
+            return redirect("cart")
 
     stock_ok, problem_product = cart_has_valid_stock(cart_items)
     if not stock_ok:
