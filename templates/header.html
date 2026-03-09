@@ -23,7 +23,12 @@
                         <a class="nav-link {% if request.path == '/shop/' %}active{% endif %}" href="/shop/">Shop</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/cart/' %}active{% endif %}" href="/cart/">Cart</a>
+                        <a href="{% url 'cart_detail' %}" class="nav-link {% if request.path == '/cart/' %}active{% endif %}">
+                            Cart
+                            {% if cart_count %}
+                                <span class="badge bg-dark">{{ cart_count }}</span>
+                            {% endif %}
+                        </a>
                     </li>
                     {% if request.user.is_authenticated %}
                     <li class="nav-item">
