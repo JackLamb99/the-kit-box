@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="mb-2">Admin Dashboard</h1>
+            <p class="text-muted mb-0">Manage products and view orders.</p>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills mb-4">
+        <li class="nav-item">
+            <a
+                class="nav-link {% if dashboard_section == 'products' %}active{% endif %}"
+                href="{% url 'dashboard_home' %}?section=products"
+            >
+                Products
+            </a>
+        </li>
+        <li class="nav-item">
+            <a
+                class="nav-link {% if dashboard_section == 'orders' %}active{% endif %}"
+                href="{% url 'dashboard_home' %}?section=orders"
+            >
+                Orders
+            </a>
+        </li>
+    </ul>
+
+    {% if dashboard_section == "products" %}
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h4 mb-0">Products</h2>
+                <a href="{% url 'add_product' %}" class="btn btn-dark">
+                    Add Product
+                </a>
+            </div>
+
+            <form method="get" class="row g-2 mb-3">
+                <input type="hidden" name="section" value="products">
+
+                <div class="col-md-4">
+                    <select name="category" class="form-select" onchange="this.form.submit()">
+                        <option value="all">All Categories</option>
+                        {% for category in categories %}
+                            <option value="{{ category.slug }}"
+                            {% if current_category == category.slug %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <select name="sort" class="form-select" onchange="this.form.submit()">
+                        <option value="name" {% if current_sort == "name" %}selected{% endif %}>
+                            Name
+                        </option>
+                        <option value="price_asc" {% if current_sort == "price_asc" %}selected{% endif %}>
+                            Price: Low to High
+                        </option>
+                        <option value="price_desc" {% if current_sort == "price_desc" %}selected{% endif %}>
+                            Price: High to Low
+                        </option>
+                        <option value="stock_asc" {% if current_sort == "stock_asc" %}selected{% endif %}>
+                            Stock: Low to High
+                        </option>
+                        <option value="stock_desc" {% if current_sort == "stock_desc" %}selected{% endif %}>
+                            Stock: High to Low
+                        </option>
+                        <option value="newest" {% if current_sort == "newest" %}selected{% endif %}>
+                            Newest
+                        </option>
+                        <option value="oldest" {% if current_sort == "oldest" %}selected{% endif %}>
+                            Oldest
+                        </option>
+                    </select>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>£{{ product.current_price }}</td>
+                            <td>{{ product.stock_quantity }}</td>
+                            <td>
+                                {% if product.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Disabled</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-outline-dark">
+                                    Edit
+                                </a>
+
+                                <form method="post" action="{% url 'delete_product' product.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Delete this product permanently?');">
+                                        Delete
+                                    </button>
+                                </form>
+
+                                <form method="post" action="{% url 'toggle_product_active' product.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    {% if product.is_active %}
+                                        <button type="submit" class="btn btn-sm btn-outline-warning">
+                                            Disable
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            Enable
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">
+                                No products found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% elif dashboard_section == "orders" %}
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h4 mb-0">Orders</h2>
+            </div>
+
+            <form method="get" class="row g-2 mb-3">
+                <input type="hidden" name="section" value="orders">
+
+                <div class="col-md-4">
+                    <select name="order_sort" class="form-select" onchange="this.form.submit()">
+                        <option value="newest" {% if current_order_sort == "newest" %}selected{% endif %}>
+                            Newest First
+                        </option>
+                        <option value="oldest" {% if current_order_sort == "oldest" %}selected{% endif %}>
+                            Oldest First
+                        </option>
+                    </select>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Order Number</th>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Country</th>
+                            <th>Total</th>
+                            <th>Created</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>{{ order.order_number|truncatechars:12 }}</td>
+                                <td>{{ order.full_name }}</td>
+                                <td>{{ order.email }}</td>
+                                <td>{{ order.get_country_display }}</td>
+                                <td>£{{ order.total }}</td>
+                                <td>{{ order.created_at|date:"d M Y, H:i" }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'dashboard_order_detail' order.order_number %}" class="btn btn-sm btn-outline-dark">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">
+                                    No orders found.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
