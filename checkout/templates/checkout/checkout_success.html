@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container page-centre">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="mb-3">Thank you for your order</h1>
+            <p>Your payment was successful.</p>
+
+            <hr>
+
+            <h2 class="h4">Order Number</h2>
+            <p>{{ order.order_number }}</p>
+
+            <h2 class="h4">Delivery Details</h2>
+            <p class="mb-1">{{ order.full_name }}</p>
+            <p class="mb-1">{{ order.address_line_1 }}</p>
+            {% if order.address_line_2 %}
+                <p class="mb-1">{{ order.address_line_2 }}</p>
+            {% endif %}
+            <p class="mb-1">{{ order.city }}</p>
+            {% if order.county %}
+                <p class="mb-1">{{ order.county }}</p>
+            {% endif %}
+            <p class="mb-1">{{ order.postcode }}</p>
+            <p class="mb-1">{{ order.get_country_display }}</p>
+            <p class="mb-1">{{ order.email }}</p>
+            <p>{{ order.phone_number }}</p>
+
+            <hr>
+
+            <h2 class="h4">Items Ordered</h2>
+            {% for item in order.lineitems.all %}
+                <div class="d-flex justify-content-between mb-2">
+                    <div>{{ item.product.name }} x {{ item.quantity }}</div>
+                    <div>£{{ item.line_total }}</div>
+                </div>
+            {% endfor %}
+
+            <hr>
+
+            <div class="d-flex justify-content-between">
+                <strong>Total</strong>
+                <strong>£{{ order.total }}</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
