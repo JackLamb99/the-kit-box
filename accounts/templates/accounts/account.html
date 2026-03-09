@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="mb-2">My Account</h1>
+            <p class="text-muted mb-0">Manage your details and view your orders.</p>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills mb-4">
+        <li class="nav-item">
+            <a
+                class="nav-link {% if account_section == 'details' %}active{% endif %}"
+                href="{% url 'accounts:account' %}?section=details"
+            >
+                My Details
+            </a>
+        </li>
+        <li class="nav-item">
+            <a
+                class="nav-link {% if account_section == 'orders' %}active{% endif %}"
+                href="{% url 'accounts:account' %}?section=orders"
+            >
+                My Orders
+            </a>
+        </li>
+    </ul>
+
+    {% if account_section == "details" %}
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h2 class="h4 mb-4">My Details</h2>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number</label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}
+                                <div class="text-danger small mt-1">{{ form.phone_number.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.first_name.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.last_name.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.address_line_1.id_for_label }}" class="form-label">Address Line 1</label>
+                            {{ form.address_line_1 }}
+                            {% if form.address_line_1.errors %}
+                                <div class="text-danger small mt-1">{{ form.address_line_1.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.address_line_2.id_for_label }}" class="form-label">Address Line 2</label>
+                            {{ form.address_line_2 }}
+                            {% if form.address_line_2.errors %}
+                                <div class="text-danger small mt-1">{{ form.address_line_2.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.town_or_city.id_for_label }}" class="form-label">Town / City</label>
+                            {{ form.town_or_city }}
+                            {% if form.town_or_city.errors %}
+                                <div class="text-danger small mt-1">{{ form.town_or_city.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.county.id_for_label }}" class="form-label">County</label>
+                            {{ form.county }}
+                            {% if form.county.errors %}
+                                <div class="text-danger small mt-1">{{ form.county.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-2 mb-3">
+                            <label for="{{ form.postcode.id_for_label }}" class="form-label">Postcode</label>
+                            {{ form.postcode }}
+                            {% if form.postcode.errors %}
+                                <div class="text-danger small mt-1">{{ form.postcode.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-2 mb-3">
+                            <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                            {{ form.country }}
+                            {% if form.country.errors %}
+                                <div class="text-danger small mt-1">{{ form.country.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3 mt-3">
+                        <button type="submit" class="btn btn-dark">
+                            Save Changes
+                        </button>
+                        {% if request.GET.updated %}
+                            <span id="details-success" class="text-success fw-semibold">
+                                Details updated successfully
+                            </span>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% elif account_section == "orders" %}
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h2 class="h4 mb-3">My Orders</h2>
+
+                <form method="get" class="row g-2 mb-3">
+                    <input type="hidden" name="section" value="orders">
+
+                    <div class="col-md-4">
+                        <select name="order_sort" class="form-select" onchange="this.form.submit()">
+                            <option value="newest" {% if current_order_sort == "newest" %}selected{% endif %}>
+                                Newest First
+                            </option>
+                            <option value="oldest" {% if current_order_sort == "oldest" %}selected{% endif %}>
+                                Oldest First
+                            </option>
+                        </select>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Order Number</th>
+                                <th>Full Name</th>
+                                <th>Country</th>
+                                <th>Total</th>
+                                <th>Created</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.order_number|truncatechars:12 }}</td>
+                                    <td>{{ order.full_name }}</td>
+                                    <td>{{ order.get_country_display }}</td>
+                                    <td>£{{ order.total }}</td>
+                                    <td>{{ order.created_at|date:"d M Y, H:i" }}</td>
+                                    <td class="text-end">
+                                        <a href="{% url 'accounts:order_detail' order.order_number %}" class="btn btn-sm btn-outline-dark">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">
+                                        You have not placed any orders yet.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const message = document.getElementById("details-success");
+    if (message) {
+        setTimeout(function () {
+            message.style.opacity = "0";
+            setTimeout(function () {
+                message.remove();
+            }, 400);
+        }, 3000);
+    }
+});
+</script>
+
+{% endblock %}
